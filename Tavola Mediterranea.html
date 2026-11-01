@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tavola Mediterranea</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#faf6ee;--card:#fff;--tx:#2a2a24;--mu:#6d6a5e;--ac:#4a6b2f;--ac2:#c8621b;--bd:#e6dfcf;--ch:#eef3e4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#1b1d17;--card:#25281f;--tx:#eee9dc;--mu:#a9a595;--ac:#9cc46a;--ac2:#ee9558;--bd:#383c2d;--ch:#2d3324}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Georgia,"Times New Roman",serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:.2em 0}h1 span{color:var(--ac2)}
+h2{font-size:1.1rem;margin:.2em 0 .6em}
+.sub{color:var(--mu);margin:0 0 14px;font-size:.95rem}
+nav{display:flex;gap:6px;margin:12px 0;overflow-x:auto}
+nav button{flex:1;min-width:84px;padding:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+label{font-size:.8rem;color:var(--mu);display:block}
+input,select{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.btn{padding:9px 14px;border-radius:10px;border:0;background:var(--ac2);color:#fff;font:inherit;cursor:pointer}
+.btn.s{background:var(--ac);padding:6px 10px;font-size:.85rem}.btn.g{background:transparent;color:var(--mu);border:1px solid var(--bd);padding:6px 10px;font-size:.85rem}
+.kc{font-weight:bold;color:var(--ac2)}
+.meal h3{margin:0;font-size:1rem;display:flex;justify-content:space-between;gap:8px}
+.meal ul{margin:.4em 0;padding-left:18px}
+.why{background:var(--ch);border-radius:8px;padding:6px 10px;font-size:.85rem;color:var(--mu);margin:6px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{background:var(--ch);border-radius:99px;padding:4px 11px;font-size:.9rem}
+.chip small{color:var(--mu)}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--bd);font-size:.92rem}
+.mu{color:var(--mu);font-size:.85rem}
+.hide{display:none}
+</style></head><body><main>
+<h1>Tavola <span>Mediterranea</span></h1>
+<p class="sub">Pasti su misura per il tuo obiettivo, con prodotti di stagione e tenendo conto di ciò che hai mangiato.</p>
+<nav id="nav"></nav>
+<div id="v"></div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const ALL=[1,2,3,4,5,6,7,8,9,10,11,12];
+const VEG=[["Spinaci",[10,11,12,1,2,3,4],23],["Broccoli",[10,11,12,1,2,3],34],["Cavolfiore",[10,11,12,1,2,3],25],["Cavolo nero",[11,12,1,2],30],["Cavolo verza",[10,11,12,1,2,3],27],["Zucca",[9,10,11,12],26],["Finocchi",[10,11,12,1,2,3,4],31],["Carciofi",[11,12,2,3,4,5],47],["Radicchio",[10,11,12,1,2,3],14],["Bietole",[10,11,12,1,2,3,4,5],19],["Cime di rapa",[10,11,12,1,2,3],22],["Carote",[9,10,11,12,1,2,3],41],["Porri",[10,11,12,1,2,3],61],["Sedano",[10,11,12,1,2,3,4],16],["Barbabietola",[10,11,12,1,2,3],43],["Asparagi",[3,4,5],20],["Piselli",[4,5,6],81],["Fave",[4,5],72],["Zucchine",[5,6,7,8,9],17],["Pomodori",[6,7,8,9],18],["Melanzane",[6,7,8,9],24],["Peperoni",[6,7,8,9],26],["Fagiolini",[6,7,8,9],31],["Rucola",[3,4,5,6,9,10,11],25],["Lattuga",ALL,15]];
+const FRU=[["Mele",[9,10,11,12,1,2,3],52],["Pere",[8,9,10,11,12,1],57],["Arance",[11,12,1,2,3,4],47],["Mandarini",[11,12,1],53],["Clementine",[11,12,1],47],["Kiwi",[11,12,1,2,3,4],61],["Melograno",[10,11,12],83],["Cachi",[10,11,12],70],["Pompelmo",[11,12,1,2,3,4],42],["Uva",[8,9,10],61],["Fragole",[4,5,6],32],["Ciliegie",[5,6,7],63],["Albicocche",[6,7],48],["Pesche",[6,7,8,9],39],["Meloni",[6,7,8,9],34],["Anguria",[6,7,8,9],30],["Prugne",[6,7,8,9],46],["Fichi",[7,8,9],74],["Nespole",[4,5,6],47]];
+// id, nome, categoria, kcal/100g, proteine/100g, costo(1-3), porzione g, note qualità
+const PRO=[
+["lent","Lenticchie","legumi",116,9,1,200,"Secche (Castelluccio IGP o italiane) o in barattolo: ottime e economiche."],
+["ceci","Ceci","legumi",120,8,1,200,"Meglio secchi italiani (Lazio, Puglia); in vaso di vetro senza additivi."],
+["fag","Fagioli cannellini","legumi",100,7,1,200,"Cannellini o borlotti secchi; il tipo ‘Zolfino’ e ‘di Lamon’ sono eccellenze."],
+["ali","Alici / sardine","pesce",130,20,1,150,"Pesce azzurro del Mediterraneo: ricco di omega‑3, poco costoso. Chiedi pescato locale."],
+["sgo","Sgombro","pesce",205,19,1,130,"Azzurro, omega‑3 elevati, conveniente."],
+["mer","Merluzzo / nasello","pesce",82,18,2,180,"Magro e leggero, ottimo per gli obiettivi di dimagrimento."],
+["ora","Orata / spigola","pesce",100,19,2,180,"Cerca allevamenti italiani con certificazione; facile da trovare."],
+["coz","Cozze","pesce",86,12,1,200,"Molto economiche e ricche di ferro e B12; meglio se italiane."],
+["ton","Tonno al naturale","pesce",100,23,1,80,"Pratico; scegli tonno pinna gialla pescato con canna, con olio d’oliva."],
+["uov","Uova","uova",143,13,1,120,"2 uova (~120 g). Preferisci categoria 0 (bio) o 1 (all’aperto)."],
+["pol","Petto di pollo","carni bianche",110,23,2,150,"Filiera italiana, preferisci allevamenti all’aperto."],
+["tac","Tacchino","carni bianche",107,24,2,150,"Magro e di filiera italiana facilmente reperibile."],
+["con","Coniglio","carni bianche",130,21,2,150,"Tradizione italiana, magro, quasi sempre nazionale."],
+["yog","Yogurt greco 0%","latticini",57,10,1,200,"Alta densità proteica, saziante."],
+["ric","Ricotta vaccina","latticini",146,9,1,100,"Fresca, da latte italiano; porzione moderata."],
+["moz","Mozzarella","latticini",250,18,2,80,"Preferisci fiordilatte o bufala campana DOP; porzioni contenute."],
+["man","Manzo magro","carne rossa",140,21,3,120,"Al massimo 1 volta a settimana; scegli tagli magri italiani."]
+];
+const CAT_T={pesce:3,legumi:3,uova:2,"carni bianche":2,latticini:2,"carne rossa":1};
+const CARB=[["Pasta integrale",350],["Farro",335],["Orzo",340],["Riso integrale",350],["Pane integrale",250],["Couscous integrale",350]];
+const GOALS={dim:["Dimagrire",-450,10,15],man:["Mantenere il peso",0,12,25],mas:["Mettere massa",300,15,30]};
+const ACT=[["Sedentario",1.2],["Leggero (1–2 allenamenti)",1.375],["Moderato (3–4)",1.55],["Attivo (5+)",1.725]];
+
+const st=(k,d)=>{try{const x=localStorage.getItem(k);return x?JSON.parse(x):d}catch(e){return d}};
+const sv=(k,x)=>{try{localStorage.setItem(k,JSON.stringify(x))}catch(e){}};
+let prof=st("prof",{sex:"f",age:35,w:70,h:170,act:1,goal:"dim"});
+let log=st("log",[]);
+let plan=null,tab="oggi";
+const today=(o=0)=>{const d=new Date();d.setDate(d.getDate()-o);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const P=id=>PRO.find(p=>p[0]===id);
+const month=()=>new Date().getMonth()+1;
+
+function target(){const b=10*prof.w+6.25*prof.h-5*prof.age+(prof.sex==="m"?5:-161);
+ const tdee=b*ACT[prof.act][1];const t=Math.max(prof.sex==="m"?1500:1200,Math.round((tdee+GOALS[prof.goal][1])/10)*10);
+ return{bmr:Math.round(b),tdee:Math.round(tdee),t}}
+const recent=n=>log.filter(e=>e.d>=today(n));
+function weekCounts(){const c={};recent(6).forEach(e=>{if(e.p){const k=P(e.p)[2];c[k]=(c[k]||0)+1}});return c}
+
+function pickPro(exCat){const wc=weekCounts(),l2=recent(2).map(e=>e.p),y=recent(1).filter(e=>e.d<today()).map(e=>e.p);
+ const sc=PRO.filter(p=>p[2]!==exCat).map(p=>{const got=wc[p[2]]||0,need=CAT_T[p[2]]-got;
+  let s=need*2+(p[5]===1?.6:p[5]===2?.2:-.5)+Math.random()*1.4;
+  if(p[2]==="carne rossa")s-=2;
+  if(prof.goal==="dim")s+=(150-p[3])/100;
+  if(prof.goal==="mas")s+=p[4]/40;
+  if(l2.includes(p[0]))s-=3;
+  if(y.some(i=>i&&P(i)[2]===p[2]))s-=1.5;
+  return[s,p,got]}).sort((a,b)=>b[0]-a[0]);
+ return sc[0]}
+
+function pickSeason(arr,n,used){const m=month();
+ const pool=arr.filter(x=>x[1].includes(m));
+ const u=recent(2).flatMap(e=>e.v||[]).concat(used||[]);
+ return pool.map(x=>[x,Math.random()+(u.includes(x[0])?-2:0)]).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0])}
+
+function gen(){const T=target().t,[,,oil,nuts]=GOALS[prof.goal],ms=[];
+ const lastC=(recent(1).filter(e=>e.d<today()).map(e=>e.c).filter(Boolean));
+ const carbs=CARB.filter(c=>!lastC.includes(c[0])).sort(()=>Math.random()-.5);
+ const used=[];
+ // colazione
+ const fr1=pickSeason(FRU,1)[0];const yog=P("yog");
+ const kb=T*.22;let bk=yog[3]*2*0+57*1.5+fr1[2]*1.5+nuts*6.5;
+ const oats=Math.max(20,Math.min(80,Math.round((kb-bk)/3.7/5)*5));
+ ms.push({m:"Colazione",k:Math.round(bk+oats*3.7),p:"yog",v:[fr1[0]],c:"Fiocchi d’avena",items:[`Yogurt greco 0% 150 g`,`${fr1[0]} di stagione 150 g`,`Fiocchi d’avena ${oats} g`,`Noci ${nuts} g`],why:"Colazione proteica e ricca di fibre, con frutta di stagione."});
+ // pasti
+ const first=pickPro(null);const second=pickPro(first[1][2]);
+ [["Pranzo",.36,first],["Cena",.30,second]].forEach(([nm,f,pk],i)=>{
+  const p=pk[1],vs=pickSeason(VEG,2,used);vs.forEach(v=>used.push(v[0]));
+  const carb=carbs[i],tk=T*f,pk_=p[3]*p[6]/100,vk=vs.reduce((a,v)=>a+v[2]*1.5,0),ok=oil*9;
+  const lo=p[2]==="legumi"?20:40,hi=p[2]==="legumi"?80:130;
+  let g=Math.round((tk-pk_-vk-ok)/carb[1]*100/5)*5;g=Math.max(lo,Math.min(hi,g));
+  const cn=carb[0]==="Pane integrale"?"Pane integrale":carb[0];
+  const pu=p[0]==="uov"?"2 uova":`${p[1]} ${p[6]} g`+(p[2]==="legumi"?" (cotti)":"");
+  const got=pk[2],tg=CAT_T[p[2]];
+  ms.push({m:nm,f,cb:carb,vg:vs,k:Math.round(pk_+vk+ok+g*carb[1]/100),p:p[0],v:vs.map(v=>v[0]),c:carb[0],
+   items:[pu,`${cn} ${g} g`+(carb[0]==="Pane integrale"?"":" (peso a crudo)"),`${vs[0][0]} e ${vs[1][0]} di stagione, 300 g`,`Olio extravergine d’oliva ${oil} g`],
+   why:`${p[2][0].toUpperCase()+p[2].slice(1)}: finora ${got} ${got===1?"volta":"volte"} negli ultimi 7 giorni (obiettivo ${tg}${p[2]==="carne rossa"?" max":""}). Costo: ${"€".repeat(p[5])}.`})});
+ const fr2=pickSeason(FRU,1,[fr1[0]])[0];
+ const sk=Math.round(T*.12),fg=Math.max(100,Math.min(250,Math.round((sk-nuts*6.5)/fr2[2]*100/10)*10));
+ ms.push({m:"Spuntino",k:Math.round(fg*fr2[2]/100+nuts*6.5),p:null,v:[fr2[0]],c:null,items:[`${fr2[0]} ${fg} g`,`Mandorle o noci ${nuts} g`],why:"Frutta intera di stagione + frutta secca per la sazietà."});
+ plan=ms}
+
+function nav(){$("#nav").innerHTML=[["oggi","Oggi"],["stag","Stagione"],["pro","Proteine"],["dia","Diario"]].map(([k,l])=>`<button class="${tab===k?"on":""}" onclick="tab='${k}';render()">${l}</button>`).join("")}
+const opt=(arr,sel)=>arr.map((a,i)=>`<option value="${a[0]??i}" ${String(a[0]??i)===String(sel)?"selected":""}>${a[1]??a}</option>`).join("");
+
+function vOggi(){const t=target();
+ return `<div class="card"><h2>Il tuo profilo</h2><div class="grid">
+ <div><label>Sesso</label><select id="sex"><option value="f" ${prof.sex==="f"?"selected":""}>Donna</option><option value="m" ${prof.sex==="m"?"selected":""}>Uomo</option></select></div>
+ <div><label>Età</label><input id="age" type="number" value="${prof.age}"></div>
+ <div><label>Peso (kg)</label><input id="w" type="number" value="${prof.w}"></div>
+ <div><label>Altezza (cm)</label><input id="h" type="number" value="${prof.h}"></div>
+ <div><label>Attività</label><select id="act">${ACT.map((a,i)=>`<option value="${i}" ${i===prof.act?"selected":""}>${a[0]}</option>`).join("")}</select></div>
+ <div><label>Obiettivo</label><select id="goal">${Object.entries(GOALS).map(([k,g])=>`<option value="${k}" ${k===prof.goal?"selected":""}>${g[0]}</option>`).join("")}</select></div></div>
+ <p class="mu">Fabbisogno stimato ${t.tdee} kcal → obiettivo giornaliero <b class="kc">${t.t} kcal</b>. È una stima indicativa, non un parere medico.</p>
+ <button class="btn" onclick="saveProf();gen();render()">Genera il menu di oggi</button></div>
+ ${plan?plan.map((m,i)=>`<div class="card meal"><h3><span>${m.m}</span><span class="kc">${m.k} kcal</span></h3><ul>${m.items.map(x=>`<li>${x}</li>`).join("")}</ul><div class="why">${m.why}</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" onclick="eat(${i})">Ho mangiato questo</button>${m.f?`<button class="btn g" onclick="tg('alt',${i})">Cambia proteina</button><button class="btn g" onclick="tg('rec',${i})">Ricetta</button>`:""}</div>${ui.alt===i?alts(i):""}${ui.rec===i?recipe(i):""}</div>`).join("")+`<p class="mu">Totale: <b class="kc">${plan.reduce((a,m)=>a+m.k,0)} kcal</b> · Premi “Genera” per un’alternativa.</p>`:`<p class="mu">Imposta il profilo e genera il menu: terrà conto di stagione, ultimi 7 giorni e obiettivo.</p>`}`}
+function saveProf(){prof={sex:$("#sex").value,age:+$("#age").value||35,w:+$("#w").value||70,h:+$("#h").value||170,act:+$("#act").value,goal:$("#goal").value};sv("prof",prof)}
+function eat(i){const m=plan[i];log.push({id:Date.now(),d:today(),m:m.m,p:m.p,v:m.v,c:m.c,k:m.k,t:m.items[0]});sv("log",log);alert("Salvato nel diario: i prossimi suggerimenti ne terranno conto.")}
+
+function vStag(){const m=+($("#sm")?.value||month());
+ const f=(a)=>a.filter(x=>x[1].includes(m)).map(x=>`<span class="chip">${x[0]} <small>${x[2]} kcal</small></span>`).join("");
+ return `<div class="card"><label>Mese</label><select id="sm" onchange="render()">${MESI.map((x,i)=>`<option value="${i+1}" ${i+1===m?"selected":""}>${x}</option>`).join("")}</select></div>
+ <div class="card"><h2>Verdura di ${MESI[m-1]}</h2><div class="chips">${f(VEG)}</div></div>
+ <div class="card"><h2>Frutta di ${MESI[m-1]}</h2><div class="chips">${f(FRU)}</div><p class="mu">kcal ogni 100 g. Il prodotto di stagione costa meno, è più saporito e ha meno impatto ambientale.</p></div>`}
+
+function vPro(){const cats=[...new Set(PRO.map(p=>p[2]))];
+ return `<div class="card"><p class="mu">Fonti proteiche facili da trovare in Italia, con qualità e frequenza consigliata nella dieta mediterranea. kcal e proteine per 100 g.</p></div>`+cats.map(c=>`<div class="card"><h2>${c[0].toUpperCase()+c.slice(1)} <span class="mu">· ${c==="carne rossa"?"max 1":CAT_T[c]}×/settimana</span></h2>${PRO.filter(p=>p[2]===c).map(p=>`<div class="row"><div><b>${p[1]}</b> <span class="mu">${"€".repeat(p[5])}</span><br><span class="mu">${p[7]}</span></div><div class="mu" style="text-align:right;white-space:nowrap">${p[3]} kcal<br>${p[4]} g prot.</div></div>`).join("")}</div>`).join("")}
+
+function vDia(){const wc=weekCounts();
+ const ents=[...log].sort((a,b)=>b.id-a.id).slice(0,30);
+ return `<div class="card"><h2>Ultimi 7 giorni</h2>${Object.entries(CAT_T).map(([c,t])=>{const g=wc[c]||0;return `<div style="margin:8px 0"><div class="row" style="border:0;padding:0"><span>${c[0].toUpperCase()+c.slice(1)}</span><span class="mu">${g} / ${t}${c==="carne rossa"?" max":""}</span></div><div class="bar"><i style="width:${Math.min(100,g/t*100)}%;${c==="carne rossa"&&g>t?"background:var(--ac2)":""}"></i></div></div>`}).join("")}</div>
+ <div class="card"><h2>Aggiungi un pasto</h2><div class="grid"><div><label>Pasto</label><select id="am">${["Colazione","Pranzo","Cena","Spuntino"].map(x=>`<option>${x}</option>`).join("")}</select></div>
+ <div><label>Proteina</label><select id="ap"><option value="">—</option>${PRO.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join("")}</select></div>
+ <div><label>kcal</label><input id="ak" type="number" placeholder="500"></div></div><p><button class="btn s" onclick="addM()">Aggiungi</button></p></div>
+ <div class="card"><h2>Diario</h2>${ents.length?ents.map(e=>`<div class="row"><span>${e.d.slice(5).split("-").reverse().join("/")} · ${e.m}: ${e.t||(e.p?P(e.p)[1]:"—")}</span><span><b class="kc">${e.k||"?"}</b> <button class="btn g" onclick="del(${e.id})">✕</button></span></div>`).join(""):'<p class="mu">Ancora nulla. Segna i pasti che mangi per avere suggerimenti più precisi.</p>'}</div>`}
+function addM(){const p=$("#ap").value;log.push({id:Date.now(),d:today(),m:$("#am").value,p:p||null,v:[],c:null,k:+$("#ak").value||0,t:p?P(p)[1]:"Pasto libero"});sv("log",log);render()}
+function del(id){log=log.filter(e=>e.id!==id);sv("log",log);render()}
+
+const REC={
+lent:["Zuppa di lenticchie al rosmarino",35,"lenticchie, sedano, carota, cipolla, rosmarino, olio EVO","Soffriggi sedano, carota e cipolla in poco olio, aggiungi le lenticchie e copri d’acqua. Cuoci 25–30 min con il rosmarino e aggiusta di sale."],
+ceci:["Pasta e ceci alla romana",30,"ceci cotti, aglio, rosmarino, concentrato di pomodoro, pepe","Rosola aglio e rosmarino, unisci un cucchiaino di concentrato e i ceci. Schiaccia metà dei ceci, aggiungi la pasta e cuoci con acqua calda mescolando."],
+fag:["Fagioli all’uccelletto",25,"cannellini cotti, salvia, aglio, passata di pomodoro","Fai insaporire aglio e salvia nell’olio, aggiungi passata e fagioli e cuoci 15 min a fuoco dolce."],
+ali:["Alici gratinate al forno",25,"alici pulite, pangrattato, prezzemolo, aglio, limone","Disponi le alici in teglia, copri con pangrattato, prezzemolo e aglio, un filo d’olio. Forno a 200 °C per 12–15 min, limone a fine cottura."],
+sgo:["Sgombro al forno con pomodorini e olive",25,"sgombro, pomodorini, olive, origano","Adagia lo sgombro in teglia con pomodorini e olive, origano e olio. Forno a 190 °C per 20 min."],
+mer:["Merluzzo in guazzetto",20,"merluzzo, pomodorini, capperi, olive, prezzemolo","Cuoci pomodorini, capperi e olive per 8 min, adagia il merluzzo, copri e cuoci 8–10 min. Prezzemolo a fine cottura."],
+ora:["Orata al cartoccio",30,"orata, limone, erbe aromatiche, pomodorini","Chiudi l’orata in carta forno con limone, erbe e pomodorini. Forno a 180 °C per 25 min."],
+coz:["Impepata di cozze",15,"cozze, aglio, prezzemolo, pepe, limone","Apri le cozze in padella coperta con aglio e un filo d’olio. Finisci con abbondante pepe, prezzemolo e limone."],
+ton:["Insalata mediterranea di tonno",10,"tonno al naturale, finocchi o pomodori, olive, origano, limone","Taglia le verdure sottili, unisci il tonno sgocciolato, condisci con olio, limone e origano e lascia riposare 5 min."],
+uov:["Frittata al forno con verdure",20,"uova, verdure di stagione, un cucchiaio di parmigiano","Salta le verdure in padella, versa le uova sbattute con sale e parmigiano e cuoci in forno a 180 °C per 15 min."],
+pol:["Petto di pollo al limone",20,"pollo a fettine, limone, salvia, un cucchiaino di farina integrale","Infarina leggermente, rosola in poco olio, sfuma con succo di limone e salvia, cuoci 8 min."],
+tac:["Straccetti di tacchino alla rucola",15,"tacchino a strisce, rucola, aceto balsamico, pepe","Rosola le strisce 5 min a fuoco vivo, sfuma con un goccio di balsamico e servi sulla rucola fresca."],
+con:["Coniglio alla cacciatora leggero",40,"coniglio, rosmarino, vino bianco, olive, pomodoro","Rosola i pezzi, sfuma col vino, aggiungi rosmarino, olive e pomodoro. Cuoci coperto 30 min a fuoco dolce."],
+yog:["Bowl di yogurt greco salato",10,"yogurt greco, cetriolo, menta, limone, pane integrale","Mescola yogurt, cetriolo a cubetti, menta, limone e un filo d’olio; servi con pane integrale tostato."],
+ric:["Ricotta al forno alle erbe",25,"ricotta, erbe aromatiche, pepe, scorza di limone","Condisci la ricotta con erbe, pepe e scorza di limone. Forno a 180 °C per 20 min fino a doratura."],
+moz:["Mozzarella con agrumi e finocchi (o pomodori)",10,"mozzarella, arance e finocchi in inverno o pomodori in estate, basilico","Taglia tutto a fette, componi il piatto e condisci con olio, pepe e basilico."],
+man:["Straccetti di manzo con rucola",15,"manzo magro, rucola, pomodorini, aceto balsamico","Rosola le strisce 3–4 min a fuoco vivo, aggiungi i pomodorini, servi sulla rucola con un goccio di balsamico."]};
+let ui={alt:null,rec:null};
+function tg(k,i){ui[k]=ui[k]===i?null:i;render()}
+function build(m,p){const oil=GOALS[prof.goal][2],T=target().t,carb=m.cb,vs=m.vg;
+ const pk_=p[3]*p[6]/100,vk=vs.reduce((a,v)=>a+v[2]*1.5,0),ok=oil*9;
+ const lo=p[2]==="legumi"?20:40,hi=p[2]==="legumi"?80:130;
+ let g=Math.round((T*m.f-pk_-vk-ok)/carb[1]*100/5)*5;g=Math.max(lo,Math.min(hi,g));
+ const got=weekCounts()[p[2]]||0,tg_=CAT_T[p[2]];
+ const pu=p[0]==="uov"?"2 uova":`${p[1]} ${p[6]} g`+(p[2]==="legumi"?" (cotti)":"");
+ return{...m,p:p[0],k:Math.round(pk_+vk+ok+g*carb[1]/100),items:[pu,`${carb[0]} ${g} g`+(carb[0]==="Pane integrale"?"":" (peso a crudo)"),`${vs[0][0]} e ${vs[1][0]} di stagione, 300 g`,`Olio extravergine d’oliva ${oil} g`],
+ why:`${p[2][0].toUpperCase()+p[2].slice(1)}: finora ${got} ${got===1?"volta":"volte"} negli ultimi 7 giorni (obiettivo ${tg_}${p[2]==="carne rossa"?" max":""}). Costo: ${"€".repeat(p[5])}.`}}
+function swap(i,id){plan[i]=build(plan[i],P(id));ui.alt=null;ui.rec=i;render()}
+function alts(i){const cur=plan[i].p,wc=weekCounts();
+ const l=PRO.filter(p=>p[0]!==cur).sort((a,b)=>(CAT_T[b[2]]-(wc[b[2]]||0))-(CAT_T[a[2]]-(wc[a[2]]||0))||a[5]-b[5]);
+ return `<div class="why"><b>Scegli un’alternativa</b> (in ordine di ciò che ti manca questa settimana)<div class="chips" style="margin-top:6px">${l.map(p=>`<button class="chip" style="border:0;cursor:pointer;color:inherit;font:inherit" onclick="swap(${i},'${p[0]}')">${p[1]} <small>${Math.round(p[3]*p[6]/100)} kcal</small></button>`).join("")}</div></div>`}
+function recipe(i){const m=plan[i],r=REC[m.p];return `<div class="why"><b>${r[0]}</b> · ${r[1]} min<br><b>Ingredienti:</b> ${r[2]}<br><b>Procedimento:</b> ${r[3]}<br><b>Contorno:</b> ${m.v.join(" e ")} al vapore o saltate in padella con aglio e un filo d’olio.<br><b>Base:</b> ${m.c}, cotta al dente e condita con parte dell’olio previsto.</div>`}
+function render(){nav();const ph=$("#v");ph.innerHTML={oggi:vOggi,stag:vStag,pro:vPro,dia:vDia}[tab]()}
+render();
+</script></body></html>
